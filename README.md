@@ -13,13 +13,20 @@ HTTP API built with:
 
 ### Configuration
 
-All settings come from `configs/config.yaml`. There are no defaults and no environment overlays — edit the YAML file before running.
+Copy the sample file and edit local values. `configs/config.yaml` is gitignored.
+
+```bash
+cp configs/config.sample.yaml configs/config.yaml
+```
+
+Viper reads only `configs/config.yaml`. There are no defaults and no environment overlays.
 
 ### Run
 
-PostgreSQL must be reachable at `database.url` in the config file.
+PostgreSQL must be reachable at `database.url` in the local config file.
 
 ```bash
+cp configs/config.sample.yaml configs/config.yaml
 go run ./cmd/server
 ```
 

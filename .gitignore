@@ -31,6 +31,9 @@ vendor/
 .env
 .env.local
 
+# Local config (copy from configs/config.sample.yaml)
+configs/config.yaml
+
 # OS
 .DS_Store
 Thumbs.db
