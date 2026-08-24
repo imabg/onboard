@@ -1,0 +1,17 @@
+server:
+  host: "0.0.0.0"
+  port: 8080
+  read_timeout: 15s
+  write_timeout: 15s
+  idle_timeout: 60s
+  shutdown_timeout: 10s
+
+database:
+  url: "postgres://postgres:postgres@localhost:5432/onboard?sslmode=disable"
+  max_conns: 10
+  min_conns: 2
+  max_conn_lifetime: 1h
+  max_conn_idle_time: 30m
+
+log:
+  level: "debug"
