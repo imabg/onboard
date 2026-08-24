@@ -7,11 +7,15 @@ import (
 	"testing"
 
 	"github.com/imabg/onboard/internal/config"
+	"github.com/imabg/onboard/internal/logger"
 	"go.uber.org/zap"
 )
 
 func TestHandleHealth(t *testing.T) {
-	s := New(config.ServerConfig{Host: "127.0.0.1", Port: 8080}, zap.NewNop(), nil)
+	logger.Replace(zap.NewNop())
+	t.Cleanup(func() { logger.Replace(zap.NewNop()) })
+
+	s := New(config.ServerConfig{Host: "127.0.0.1", Port: 8080}, nil)
 
 	req := httptest.NewRequest(http.MethodGet, "/health", nil)
 	rec := httptest.NewRecorder()
@@ -31,7 +35,10 @@ func TestHandleHealth(t *testing.T) {
 }
 
 func TestHandleRoot(t *testing.T) {
-	s := New(config.ServerConfig{Host: "127.0.0.1", Port: 8080}, zap.NewNop(), nil)
+	logger.Replace(zap.NewNop())
+	t.Cleanup(func() { logger.Replace(zap.NewNop()) })
+
+	s := New(config.ServerConfig{Host: "127.0.0.1", Port: 8080}, nil)
 
 	req := httptest.NewRequest(http.MethodGet, "/api/v1/", nil)
 	rec := httptest.NewRecorder()
@@ -51,7 +58,10 @@ func TestHandleRoot(t *testing.T) {
 }
 
 func TestUnknownRoute(t *testing.T) {
-	s := New(config.ServerConfig{Host: "127.0.0.1", Port: 8080}, zap.NewNop(), nil)
+	logger.Replace(zap.NewNop())
+	t.Cleanup(func() { logger.Replace(zap.NewNop()) })
+
+	s := New(config.ServerConfig{Host: "127.0.0.1", Port: 8080}, nil)
 
 	req := httptest.NewRequest(http.MethodGet, "/missing", nil)
 	rec := httptest.NewRecorder()

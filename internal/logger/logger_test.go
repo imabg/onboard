@@ -4,22 +4,39 @@ import (
 	"testing"
 
 	"github.com/imabg/onboard/internal/config"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+	"go.uber.org/zap/zaptest/observer"
 )
 
-func TestNewProduction(t *testing.T) {
-	log, err := New(config.LogConfig{Level: "info", Encoding: "json", Development: false})
-	if err != nil {
-		t.Fatalf("New() error = %v", err)
+func TestInit(t *testing.T) {
+	t.Cleanup(func() { Replace(zap.NewNop()) })
+
+	if err := Init(config.LogConfig{Level: "info"}); err != nil {
+		t.Fatalf("Init() error = %v", err)
 	}
-	if log == nil {
-		t.Fatal("New() returned nil logger")
+	if L() == nil {
+		t.Fatal("L() returned nil")
 	}
-	_ = log.Sync()
+	Sync()
 }
 
-func TestNewInvalidLevel(t *testing.T) {
-	_, err := New(config.LogConfig{Level: "loud"})
-	if err == nil {
-		t.Fatal("New() expected error for invalid level")
+func TestInitInvalidLevel(t *testing.T) {
+	if err := Init(config.LogConfig{Level: "loud"}); err == nil {
+		t.Fatal("Init() expected error for invalid level")
+	}
+}
+
+func TestReplace(t *testing.T) {
+	core, logs := observer.New(zapcore.InfoLevel)
+	Replace(zap.New(core))
+	t.Cleanup(func() { Replace(zap.NewNop()) })
+
+	L().Info("hello")
+	if logs.Len() != 1 {
+		t.Fatalf("got %d logs, want 1", logs.Len())
+	}
+	if logs.All()[0].Message != "hello" {
+		t.Errorf("message = %q, want hello", logs.All()[0].Message)
 	}
 }

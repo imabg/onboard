@@ -8,18 +8,18 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/imabg/onboard/internal/config"
+	"github.com/imabg/onboard/internal/logger"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
 )
 
 type Server struct {
 	http *http.Server
-	log  *zap.Logger
 	pool *pgxpool.Pool
 }
 
-func New(cfg config.ServerConfig, log *zap.Logger, pool *pgxpool.Pool) *Server {
-	s := &Server{log: log, pool: pool}
+func New(cfg config.ServerConfig, pool *pgxpool.Pool) *Server {
+	s := &Server{pool: pool}
 	s.http = &http.Server{
 		Addr:         cfg.Addr(),
 		Handler:      s.routes(),
@@ -32,7 +32,7 @@ func New(cfg config.ServerConfig, log *zap.Logger, pool *pgxpool.Pool) *Server {
 
 func (s *Server) routes() http.Handler {
 	r := mux.NewRouter()
-	r.Use(s.loggingMiddleware)
+	r.Use(loggingMiddleware)
 
 	r.HandleFunc("/health", s.handleHealth).Methods(http.MethodGet)
 	r.HandleFunc("/ready", s.handleReady).Methods(http.MethodGet)
@@ -44,7 +44,7 @@ func (s *Server) routes() http.Handler {
 }
 
 func (s *Server) Start() error {
-	s.log.Info("http server listening", zap.String("addr", s.http.Addr))
+	logger.L().Info("http server listening", zap.String("addr", s.http.Addr))
 	if err := s.http.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		return err
 	}
@@ -52,7 +52,7 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) Shutdown(ctx context.Context) error {
-	s.log.Info("http server shutting down")
+	logger.L().Info("http server shutting down")
 	return s.http.Shutdown(ctx)
 }
 
@@ -65,7 +65,7 @@ func (s *Server) handleReady(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 
 	if err := s.pool.Ping(ctx); err != nil {
-		s.log.Error("readiness check failed", zap.Error(err))
+		logger.L().Error("readiness check failed", zap.Error(err))
 		writeJSON(w, http.StatusServiceUnavailable, map[string]string{
 			"status": "unavailable",
 			"error":  "database unreachable",

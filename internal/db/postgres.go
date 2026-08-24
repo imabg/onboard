@@ -6,11 +6,12 @@ import (
 	"time"
 
 	"github.com/imabg/onboard/internal/config"
+	"github.com/imabg/onboard/internal/logger"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
 )
 
-func NewPool(ctx context.Context, cfg config.DatabaseConfig, log *zap.Logger) (*pgxpool.Pool, error) {
+func NewPool(ctx context.Context, cfg config.DatabaseConfig) (*pgxpool.Pool, error) {
 	poolCfg, err := pgxpool.ParseConfig(cfg.URL)
 	if err != nil {
 		return nil, fmt.Errorf("parse database url: %w", err)
@@ -34,7 +35,7 @@ func NewPool(ctx context.Context, cfg config.DatabaseConfig, log *zap.Logger) (*
 		return nil, fmt.Errorf("ping database: %w", err)
 	}
 
-	log.Info("database connected",
+	logger.L().Info("database connected",
 		zap.Int32("max_conns", cfg.MaxConns),
 		zap.Int32("min_conns", cfg.MinConns),
 	)

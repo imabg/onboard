@@ -8,26 +8,16 @@ HTTP API built with:
 
 - [gorilla/mux](https://github.com/gorilla/mux) — routing
 - [pgx](https://github.com/jackc/pgx) — PostgreSQL
-- [zap](https://github.com/uber-go/zap) — structured logging
-- [viper](https://github.com/spf13/viper) — configuration (YAML + env)
+- [zap](https://github.com/uber-go/zap) — structured JSON logging
+- [viper](https://github.com/spf13/viper) — YAML configuration
 
 ### Configuration
 
-Defaults live in `configs/config.yaml`. Environment variables override the file.
-Copy `.env.example` to `.env` for local overrides (loaded by Viper).
-
-| Variable | Description |
-| --- | --- |
-| `SERVER_HOST` | Bind address (default `0.0.0.0`) |
-| `SERVER_PORT` | Bind port (default `8080`) |
-| `DATABASE_URL` | PostgreSQL DSN |
-| `LOG_LEVEL` | `debug`, `info`, `warn`, or `error` |
-| `LOG_ENCODING` | `json` or `console` |
-| `LOG_DEVELOPMENT` | `true` for development logger |
+All settings come from `configs/config.yaml`. There are no defaults and no environment overlays — edit the YAML file before running.
 
 ### Run
 
-PostgreSQL must be reachable at `DATABASE_URL` before the process starts.
+PostgreSQL must be reachable at `database.url` in the config file.
 
 ```bash
 go run ./cmd/server
