@@ -27,7 +27,7 @@ PostgreSQL must be reachable at `database.url` in the local config file.
 
 ```bash
 cp configs/config.sample.yaml configs/config.yaml
-go run ./cmd/server
+go run ./cmd/onboard
 ```
 
 ### Tests
