@@ -30,14 +30,6 @@ cp configs/config.sample.yaml configs/config.yaml
 go run ./cmd/server
 ```
 
-### Endpoints
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/health` | Liveness |
-| `GET` | `/ready` | Readiness (pings PostgreSQL) |
-| `GET` | `/api/v1/` | Service info |
-
 ### Tests
 
 ```bash
