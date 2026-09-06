@@ -37,3 +37,6 @@ configs/config.yaml
 # OS
 .DS_Store
 Thumbs.db
+
+# Project plan (local only)
+plan.md
