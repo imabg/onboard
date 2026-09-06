@@ -6,7 +6,7 @@ An HR-Portal.
 
 HTTP API built with:
 
-- [gorilla/mux](https://github.com/gorilla/mux) — routing
+- `net/http` `ServeMux` — routing (stdlib)
 - [pgx](https://github.com/jackc/pgx) — PostgreSQL
 - [zap](https://github.com/uber-go/zap) — structured JSON logging
 - [viper](https://github.com/spf13/viper) — YAML configuration

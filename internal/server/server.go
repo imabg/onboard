@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gorilla/mux"
 	"github.com/imabg/onboard/internal/config"
 	"github.com/imabg/onboard/internal/logger"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -31,16 +30,12 @@ func New(cfg config.ServerConfig, pool *pgxpool.Pool) *Server {
 }
 
 func (s *Server) routes() http.Handler {
-	r := mux.NewRouter()
-	r.Use(loggingMiddleware)
-
-	r.HandleFunc("/health", s.handleHealth).Methods(http.MethodGet)
-	r.HandleFunc("/ready", s.handleReady).Methods(http.MethodGet)
-
-	api := r.PathPrefix("/api/v1").Subrouter()
-	api.HandleFunc("/", s.handleRoot).Methods(http.MethodGet)
-
-	return r
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /health", s.handleHealth)
+	mux.HandleFunc("GET /ready", s.handleReady)
+	mux.HandleFunc("GET /api/v1/", s.handleRoot)
+	mux.HandleFunc("GET /api/v1", s.handleRoot)
+	return loggingMiddleware(mux)
 }
 
 func (s *Server) Start() error {
